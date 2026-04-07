@@ -9,9 +9,9 @@ import {
 } from "./content.js";
 import { printSection } from "./helpers.js";
 import {
-  runPhase1ResearchScan,
-  runPhase2LongTermMemory,
-  runPhase3PublicationApproval,
+  runEvidenceHarvestPhase,
+  runKnowledgeBaseAssemblyPhase,
+  runFinalReportDraftPhase,
 } from "./phases/index.js";
 import { createResearchAgentResources } from "./runtime.js";
 
@@ -40,9 +40,9 @@ async function main() {
   const target = createResearchTarget(productName);
   const resources = await createResearchAgentResources(target);
 
-  await runPhase1ResearchScan(resources, target);
-  await runPhase2LongTermMemory(resources, target);
-  const phase3Completed = await runPhase3PublicationApproval(resources, target);
+  await runEvidenceHarvestPhase(resources, target);
+  await runKnowledgeBaseAssemblyPhase(resources, target);
+  const phase3Completed = await runFinalReportDraftPhase(resources, target);
 
   if (!phase3Completed) {
     printSection("Stopped");

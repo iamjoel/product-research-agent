@@ -43,8 +43,14 @@ export type ResearchTarget = {
   outputPaths: {
     directory: string;
     rawDirectory: string;
+    analysisDirectory: string;
     executionLog: string;
-    wiki: string;
+    evidenceIndex: string;
+    normalizedFacts: string;
+    claimsAndConfidence: string;
+    conflicts: string;
+    openQuestions: string;
+    knowledgeBase: string;
     report: string;
     memoryProduct: string;
   };
@@ -159,11 +165,18 @@ export const PHASE_TITLES = {
 export function createResearchTarget(productName: string): ResearchTarget {
   const slug = slugify(productName);
   const outputDirectory = `outputs/${slug}`;
+  const analysisDirectory = `${outputDirectory}/analysis`;
   const outputPaths = {
     directory: outputDirectory,
     rawDirectory: `${outputDirectory}/raw`,
+    analysisDirectory,
     executionLog: `${outputDirectory}/agent-execution-log.md`,
-    wiki: `${outputDirectory}/wiki.md`,
+    evidenceIndex: `${analysisDirectory}/evidence-index.md`,
+    normalizedFacts: `${analysisDirectory}/normalized-facts.md`,
+    claimsAndConfidence: `${analysisDirectory}/claims-and-confidence.md`,
+    conflicts: `${analysisDirectory}/conflicts.md`,
+    openQuestions: `${analysisDirectory}/open-questions.md`,
+    knowledgeBase: `${analysisDirectory}/knowledge-base.md`,
     report: `${outputDirectory}/report.md`,
     memoryProduct: `/products/${slug}.md`,
   };

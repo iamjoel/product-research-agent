@@ -5,8 +5,8 @@ This repository contains a CLI product research agent built with `deepagents` an
 The agent asks for a product name, works inside a checked-in `.workspace/` directory, and runs a three-phase workflow:
 
 - harvest raw evidence into `outputs/<slug>/raw/`
-- organize that material into `wiki.md`
-- optionally generate `report.md` from a checked-in report template
+- optimize that material into a structured analysis package under `outputs/<slug>/analysis/`
+- optionally compile a final `report.md` from the analysis package and a checked-in report template
 
 ## Capabilities
 
@@ -54,20 +54,29 @@ The agent runs three phases in sequence:
 1. `Evidence Harvest`
 Reads `.workspace/frameworks/brief.md` and the rest of `.workspace/frameworks/*`, researches the product across the configured dimensions, and writes multiple source-heavy raw files under `outputs/<slug>/raw/`.
 2. `Knowledge Base Assembly`
-Writes durable findings to `/memories/products/<slug>.md`, then reuses that memory plus the raw files to generate `wiki.md`.
+Writes durable findings to `/memories/products/<slug>.md`, then reuses that memory plus the raw files to generate a structured analysis package under `outputs/<slug>/analysis/`.
 3. `Final Report Draft`
-Waits for CLI confirmation. Enter `y` to generate `report.md` from `wiki.md`, `raw/`, and `.workspace/frameworks/report-template.md`. Enter `n` to stop before report generation.
+Waits for CLI confirmation. Enter `y` to generate `report.md` from `analysis/`, `raw/`, and `.workspace/frameworks/report-template.md`. Enter `n` to stop before report generation.
 
 ## Outputs
 
 For each product, the agent creates files under `outputs/<product-slug>` inside the runtime workspace:
 
 - `raw/`
+- `analysis/`
 - `agent-execution-log.md`
-- `wiki.md`
 - `report.md`
 
 The `raw/` directory is expected to contain multiple focused files rather than a single polished synthesis document.
+
+The `analysis/` directory contains the optimized phase 2 artifacts:
+
+- `evidence-index.md`
+- `normalized-facts.md`
+- `claims-and-confidence.md`
+- `conflicts.md`
+- `open-questions.md`
+- `knowledge-base.md`
 
 The agent also writes durable findings to `/memories/products/<product-slug>.md`.
 

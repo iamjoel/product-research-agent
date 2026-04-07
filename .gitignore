@@ -69,4 +69,4 @@ public/fallback-*.js
 .eslintcache
 
 
-/outputs
+.workspace/outputs/

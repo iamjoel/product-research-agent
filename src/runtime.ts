@@ -52,6 +52,9 @@ export async function createResearchAgentResources(
   await mkdir(path.join(WORKSPACE_ROOT, "outputs", target.slug, "raw"), {
     recursive: true,
   });
+  await mkdir(path.join(WORKSPACE_ROOT, "outputs", target.slug, "analysis"), {
+    recursive: true,
+  });
 
   const shellBackend = await LocalShellBackend.create({
     rootDir: WORKSPACE_ROOT,

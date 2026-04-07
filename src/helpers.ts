@@ -1,5 +1,5 @@
 import { createInterface } from "node:readline/promises";
-import { appendFile, writeFile } from "node:fs/promises";
+import { access, appendFile, readFile, writeFile } from "node:fs/promises";
 import process from "node:process";
 
 export type TodoItem = {
@@ -216,6 +216,54 @@ export async function writeExecutionLogNote(
   note: string,
 ) {
   await appendFile(filePath, `## ${phaseTitle}\n\n${note}\n\n`, "utf-8");
+}
+
+export async function assertFilesExist(
+  filePaths: string[],
+  contextLabel: string,
+) {
+  const missing: string[] = [];
+
+  for (const filePath of filePaths) {
+    try {
+      await access(filePath);
+    } catch {
+      missing.push(filePath);
+    }
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `${contextLabel} did not produce the expected files: ${missing.join(", ")}`,
+    );
+  }
+}
+
+export async function readMarkdownHeadings(filePath: string) {
+  const content = await readFile(filePath, "utf-8");
+
+  return content
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("## "))
+    .map((line) => line.slice(3).trim());
+}
+
+export async function assertReportMatchesTemplate(
+  templatePath: string,
+  reportPath: string,
+) {
+  const templateHeadings = await readMarkdownHeadings(templatePath);
+  const reportHeadings = await readMarkdownHeadings(reportPath);
+  const missingHeadings = templateHeadings.filter(
+    (heading) => !reportHeadings.includes(heading),
+  );
+
+  if (missingHeadings.length > 0) {
+    throw new Error(
+      `Report is missing required sections from the template: ${missingHeadings.join(", ")}`,
+    );
+  }
 }
 
 export function extractTodos(payload: unknown): TodoItem[] {
