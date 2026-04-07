@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "agent": "./src/studio-workflow.ts:workflow",
+    "workflow": "./src/studio-workflow.ts:workflow"
+  },
+  "env": ".env"
+}
