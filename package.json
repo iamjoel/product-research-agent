@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "tsx src/main.ts",
+    "studio:dev": "npx @langchain/langgraph-cli dev",
+    "studio:dev:tunnel": "npx @langchain/langgraph-cli dev --tunnel",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],

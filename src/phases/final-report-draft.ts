@@ -29,18 +29,10 @@ Requirements:
 - Make the report concise, decision-oriented, and source-aware.`;
 }
 
-export async function runFinalReportDraftPhase(
+export async function generateFinalReport(
   resources: ResearchAgentResources,
   target: ResearchTarget,
 ) {
-  printSection(PHASE_TITLES.phase3);
-  printAction(
-    `Waiting for approval to generate the final report for "${target.productName}".`,
-  );
-
-  const shouldContinue = await promptYesNo(
-    `Generate report.md for "${target.productName}" now? [y/n]: `,
-  );
   const executionLogPath = path.join(WORKSPACE_ROOT, target.outputPaths.executionLog);
   const analysisFiles = [
     target.outputPaths.evidenceIndex,
@@ -56,16 +48,6 @@ export async function runFinalReportDraftPhase(
     "frameworks",
     "report-template.md",
   );
-
-  if (!shouldContinue) {
-    await writeExecutionLogNote(
-      executionLogPath,
-      `${PHASE_TITLES.phase3} - Approval`,
-      "User declined report generation before the phase 3 agent run.",
-    );
-    printResult("Report generation stopped by user.");
-    return false;
-  }
 
   await assertFilesExist(analysisFiles, PHASE_TITLES.phase3);
 
@@ -92,4 +74,31 @@ export async function runFinalReportDraftPhase(
   );
 
   return true;
+}
+
+export async function runFinalReportDraftPhase(
+  resources: ResearchAgentResources,
+  target: ResearchTarget,
+) {
+  printSection(PHASE_TITLES.phase3);
+  printAction(
+    `Waiting for approval to generate the final report for "${target.productName}".`,
+  );
+
+  const shouldContinue = await promptYesNo(
+    `Generate report.md for "${target.productName}" now? [y/n]: `,
+  );
+  const executionLogPath = path.join(WORKSPACE_ROOT, target.outputPaths.executionLog);
+
+  if (!shouldContinue) {
+    await writeExecutionLogNote(
+      executionLogPath,
+      `${PHASE_TITLES.phase3} - Approval`,
+      "User declined report generation before the phase 3 agent run.",
+    );
+    printResult("Report generation stopped by user.");
+    return false;
+  }
+
+  return generateFinalReport(resources, target);
 }

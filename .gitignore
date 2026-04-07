@@ -69,3 +69,7 @@ public/fallback-*.js
 .eslintcache
 
 .workspace/outputs/
+.workspace/large_tool_results
+
+# LangGraph API
+.langgraph_api

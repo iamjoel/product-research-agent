@@ -42,19 +42,25 @@ function getModel() {
   });
 }
 
-export async function createResearchAgentResources(
-  target: ResearchTarget,
-): Promise<ResearchAgentResources> {
+async function createAgentResources(options: {
+  agentName: string;
+  target?: ResearchTarget;
+}): Promise<ResearchAgentResources> {
+  const { agentName, target } = options;
+
   await mkdir(WORKSPACE_ROOT, { recursive: true });
-  await mkdir(path.join(WORKSPACE_ROOT, "outputs", target.slug), {
-    recursive: true,
-  });
-  await mkdir(path.join(WORKSPACE_ROOT, "outputs", target.slug, "raw"), {
-    recursive: true,
-  });
-  await mkdir(path.join(WORKSPACE_ROOT, "outputs", target.slug, "analysis"), {
-    recursive: true,
-  });
+
+  if (target) {
+    await mkdir(path.join(WORKSPACE_ROOT, "outputs", target.slug), {
+      recursive: true,
+    });
+    await mkdir(path.join(WORKSPACE_ROOT, "outputs", target.slug, "raw"), {
+      recursive: true,
+    });
+    await mkdir(path.join(WORKSPACE_ROOT, "outputs", target.slug, "analysis"), {
+      recursive: true,
+    });
+  }
 
   const shellBackend = await LocalShellBackend.create({
     rootDir: WORKSPACE_ROOT,
@@ -80,7 +86,7 @@ export async function createResearchAgentResources(
   const researchSubagent = createResearchSubagent(tools);
 
   const agent = createDeepAgent({
-    name: `deepagentsjs-product-research-${target.slug}`,
+    name: agentName,
     model: getModel(),
     systemPrompt: supervisorPrompt,
     tools: [
@@ -104,4 +110,19 @@ export async function createResearchAgentResources(
     shellBackend,
     memoryBackend,
   };
+}
+
+export async function createResearchAgentResources(
+  target: ResearchTarget,
+): Promise<ResearchAgentResources> {
+  return createAgentResources({
+    agentName: `deepagentsjs-product-research-${target.slug}`,
+    target,
+  });
+}
+
+export async function createStudioAgentResources(): Promise<ResearchAgentResources> {
+  return createAgentResources({
+    agentName: "deepagentsjs-product-research-studio",
+  });
 }

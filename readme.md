@@ -45,9 +45,13 @@ OPENAI_MODEL=gpt-4.1-mini
 
 ## Run
 
+Run the end-to-end CLI workflow:
+
 ```bash
-pnpm research:agent
+pnpm start
 ```
+
+This command asks for a product name and executes the full three-phase research pipeline locally.
 
 The agent runs three phases in sequence:
 
@@ -87,6 +91,40 @@ The agent also writes durable findings to `/memories/products/<product-slug>.md`
 - tool calls and arguments
 - tool outputs
 - approval outcomes in phase 3
+
+## LangGraph Studio
+
+This project includes a Studio entrypoint for local debugging with LangSmith Studio.
+
+Files involved:
+
+- `langgraph.json`: LangGraph CLI configuration
+- `src/studio-workflow.ts`: exported workflow graph entrypoint for Studio
+
+Environment variables:
+
+- `LANGSMITH_API_KEY`: required for LangSmith Studio to connect to your local agent server, but not required by the local workflow code itself
+- `LANGSMITH_TRACING=false`: optional if you do not want traces sent to LangSmith
+
+Run the local Studio server:
+
+```bash
+pnpm studio:dev
+```
+
+This command starts a local LangGraph Agent Server for the Studio wrapper workflow.
+In Studio, start the graph with either a plain product name string or an object such as `{ "productName": "LangSmith" }`.
+The wrapper then runs phases 1 and 2 automatically and pauses on a phase 3 interrupt for report approval.
+You can start the local server without `LANGSMITH_API_KEY`, but the Studio UI connection may still require it.
+
+If you need a tunnel for Safari or remote access:
+
+```bash
+pnpm studio:dev:tunnel
+```
+
+When phase 3 is reached, resume the interrupt with `y` to generate `report.md` or `n` to stop before report generation.
+This Studio integration wraps the full workflow rather than exposing only the low-level supervisor agent.
 
 ## Development
 
